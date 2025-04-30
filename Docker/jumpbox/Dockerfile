@@ -14,6 +14,7 @@ RUN wget -q --https-only \
 
 
 RUN mkdir -p downloads/{client,cni-plugins,controller,worker} && \
+    ls && \
     ARCH=$(dpkg --print-architecture) && \
     echo "Detected ARCH: $ARCH" && \
     tar -xvf downloads/crictl-v1.32.0-linux-${ARCH}.tar.gz -C downloads/worker/ && \
