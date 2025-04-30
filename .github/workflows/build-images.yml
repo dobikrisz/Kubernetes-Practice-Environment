@@ -7,6 +7,7 @@ on:
     branches: [ "main" ]
     paths:
       - 'VM images/**'
+      - .github/workflows/build-images.yml
   pull_request:
     branches: [ "main" ]
 
