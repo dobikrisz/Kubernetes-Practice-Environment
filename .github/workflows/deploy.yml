@@ -1,13 +1,10 @@
-name: Build Docker Images
+name: Deploy Infrastructure
 
 # Controls when the workflow will run
 on:
   # Triggers the workflow on push or pull request events but only for the "main" branch
   push:
     branches: [ "main" ]
-    paths:
-      - 'Docker/**'
-      - .github/workflows/build-images.yml
   pull_request:
     branches: [ "main" ]
 
@@ -39,21 +36,27 @@ jobs:
           token_format: 'access_token'
           access_token_lifetime: '3600s'
 
-      - name: Set up Docker for Artifact Registry
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: "1.11.4"
+
+      - name: Terraform Init
+        working-directory: infrastructure
         env:
           GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
-        run: |
-            gcloud auth configure-docker ${{ env.REGION }}-docker.pkg.dev --quiet
+        run: terraform init
 
-      - name: Build Images
-        working-directory: Docker
-        run: |
-          docker build -f jumpbox/Dockerfile -t ${{ env.REGION }}-docker.pkg.dev/${{ env.GOOGLE_PROJECT_ID }}/${{ env.REPO_NAME }}/jumpbox:latest .
-
-      - name: Push Docker image
-        working-directory: Docker
+      - name: Terraform Plan
+        working-directory: infrastructure
         env:
           GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
-        run: |
-          docker push ${{ env.REGION }}-docker.pkg.dev/${{ env.GOOGLE_PROJECT_ID }}/${{ env.REPO_NAME }}/jumpbox:latest
+        run: terraform plan 
+
+      - name: Terraform Apply
+        working-directory: infrastructure
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
+        run: terraform apply --auto-approve 
+            
 

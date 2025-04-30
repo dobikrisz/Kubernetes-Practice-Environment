@@ -1,19 +1,19 @@
-FROM debian:bookworm
+#!bin/bash
 
-RUN apt-get update && \
-    apt-get -y install wget curl vim openssl git
+apt-get update && \
+apt-get -y install wget curl vim openssl git
 
-COPY "../kubernetes-the-hard-way" "/kubernetes-the-hard-way"
+git clone --depth 1 \
+  https://github.com/kelseyhightower/kubernetes-the-hard-way.git
 
-WORKDIR "/kubernetes-the-hard-way"
+cd kubernetes-the-hard-way
 
-RUN wget -q --https-only \
+wget -q --https-only \
         --timestamping \
         -P downloads \
         -i downloads-$(dpkg --print-architecture).txt
 
-
-RUN mkdir -p downloads/client downloads/cni-plugins downloads/controller downloads/worker && \
+mkdir -p downloads/{client, cni-plugins, controller, worker} && \
     ARCH=$(dpkg --print-architecture) && \
     echo "Detected ARCH: $ARCH" && \
     tar -xvf downloads/crictl-v1.32.0-linux-${ARCH}.tar.gz -C downloads/worker/ && \
@@ -35,14 +35,8 @@ RUN mkdir -p downloads/client downloads/cni-plugins downloads/controller downloa
     mv downloads/kube-proxy downloads/worker/ && \
     mv downloads/runc.${ARCH} downloads/worker/runc
 
+rm -rf downloads/*gz
 
-RUN rm -rf downloads/*gz
+chmod +x downloads/{client,cni-plugins,controller,worker}/*
 
-RUN chmod +x downloads/client/* && \
-    chmod +x downloads/cni-plugins/* && \
-    chmod +x downloads/controller/* && \
-    chmod +x downloads/worker/*
-
-RUN cp downloads/client/kubectl /usr/local/bin/
-
-
+cp downloads/client/kubectl /usr/local/bin/
