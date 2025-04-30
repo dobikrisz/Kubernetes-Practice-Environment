@@ -6,7 +6,7 @@ on:
   push:
     branches: [ "main" ]
     paths:
-      - 'VM images/**'
+      - 'Docker/**'
       - .github/workflows/build-images.yml
   pull_request:
     branches: [ "main" ]
