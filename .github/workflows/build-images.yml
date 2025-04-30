@@ -44,7 +44,7 @@ jobs:
 
       - name: Build Images
         run: |
-          docker build -f "VM images/jumpbox" -t ${{ env.REGION }}-docker.pkg.dev/${{ env.GOOGLE_PROJECT_ID }}/${{ env.REPO_NAME }}/jumpbox:latest .
+          docker build -f "Docker/jumpbox" -t ${{ env.REGION }}-docker.pkg.dev/${{ env.GOOGLE_PROJECT_ID }}/${{ env.REPO_NAME }}/jumpbox:latest .
 
       - name: Push Docker image
         env:
