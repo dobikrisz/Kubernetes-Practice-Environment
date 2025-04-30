@@ -43,14 +43,12 @@ jobs:
             gcloud auth configure-docker ${{ env.REGION }}-docker.pkg.dev
 
       - name: Build Images
-        working-directory: ./Docker
+        working-directory: Docker
         run: |
-          ls
-          cd Docker
           docker build -f jumpbox/Dockerfile -t ${{ env.REGION }}-docker.pkg.dev/${{ env.GOOGLE_PROJECT_ID }}/${{ env.REPO_NAME }}/jumpbox:latest .
 
       - name: Push Docker image
-        working-directory: ./Docker
+        working-directory: Docker
         env:
           GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
         run: |
