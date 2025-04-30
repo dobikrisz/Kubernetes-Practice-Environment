@@ -1,4 +1,4 @@
-#!bin/bash
+#! bin/bash
 
 apt-get update && \
 apt-get -y install wget curl vim openssl git
@@ -39,4 +39,4 @@ rm -rf downloads/*gz
 
 chmod +x downloads/{client,cni-plugins,controller,worker}/*
 
-cp downloads/client/kubectl /usr/local/bin/
+cp downloads/client/kubectl/usr/local/bin/
