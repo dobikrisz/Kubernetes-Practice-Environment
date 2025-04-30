@@ -51,7 +51,7 @@ resource "google_compute_firewall" "default" {
   source_ranges = [google_compute_subnetwork.k8s-subnet.ip_cidr_range]
 }
 
-resource "google_compute_firewall" "default" {
+resource "google_compute_firewall" "external-ssh" {
   name    = "allow-external-ssh"
   network = google_compute_network.vpc_network.id
 
