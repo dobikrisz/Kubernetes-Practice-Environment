@@ -13,8 +13,8 @@ RUN wget -q --https-only \
         -i downloads-$(dpkg --print-architecture).txt
 
 
-RUN mkdir -p downloads/{client,cni-plugins,controller,worker}
-RUN ARCH=$(dpkg --print-architecture) && \
+RUN mkdir -p downloads/{client,cni-plugins,controller,worker} && \
+    ARCH=$(dpkg --print-architecture) && \
     echo "Detected ARCH: $ARCH" && \
     tar -xvf downloads/crictl-v1.32.0-linux-${ARCH}.tar.gz -C downloads/worker/ && \
     tar -xvf downloads/containerd-2.1.0-beta.0-linux-${ARCH}.tar.gz --strip-components 1 -C downloads/worker/ && \
