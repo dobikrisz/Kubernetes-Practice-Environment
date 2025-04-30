@@ -42,4 +42,4 @@ sudo chmod +x downloads/cni-plugins/* && \
 sudo chmod +x downloads/controller/* && \
 sudo chmod +x downloads/worker/*
 
-sudo cp downloads/client/kubectl/usr/local/bin/
+sudo cp downloads/client/kubectl /usr/local/bin/
