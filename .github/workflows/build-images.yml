@@ -28,6 +28,9 @@ jobs:
       REPO_NAME: gke-vm
 
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
       - name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v2
         with:
@@ -43,11 +46,12 @@ jobs:
             gcloud auth configure-docker ${{ env.REGION }}-docker.pkg.dev --quiet
 
       - name: Build Images
+        working-directory: ./docker
         run: |
-          ls
           docker build -f docker/jumpbox/Dockerfile -t ${{ env.REGION }}-docker.pkg.dev/${{ env.GOOGLE_PROJECT_ID }}/${{ env.REPO_NAME }}/jumpbox:latest .
 
       - name: Push Docker image
+        working-directory: ./docker
         env:
           GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
         run: |
