@@ -46,4 +46,5 @@ resource "google_compute_firewall" "default" {
   }
 
   target_tags = ["kubernetes-server"]
+  source_ranges = ["0.0.0.0/0"]
 }

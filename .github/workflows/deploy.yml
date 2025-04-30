@@ -22,6 +22,7 @@ jobs:
     env:
       GOOGLE_PROJECT_ID: gke-sandbox-448713
       REGION: europe-west3
+      ZONE: europe-west3-a
       BUCKET: k8s-backend-448713
 
     steps:
@@ -61,6 +62,7 @@ jobs:
         env:
           TF_VAR_PROJECT_ID: ${{ env.GOOGLE_PROJECT_ID }}
           TF_VAR_REGION: ${{ env.REGION }}
+          TF_VAR_ZONE: ${{ env.ZONE }}
         run: terraform plan -lock-timeout=60s
 
       - name: Terraform Apply
@@ -68,6 +70,7 @@ jobs:
         env:
           TF_VAR_PROJECT_ID: ${{ env.GOOGLE_PROJECT_ID }}
           TF_VAR_REGION: ${{ env.REGION }}
+          TF_VAR_ZONE: ${{ env.ZONE }}
         run: terraform apply --auto-approve 
             
 
