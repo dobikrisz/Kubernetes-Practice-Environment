@@ -40,7 +40,7 @@ jobs:
         env:
           GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
         run: |
-          gsutil ls | grep ${{ env.BUCKET }}
+          gcloud storage ls | grep ${{ env.BUCKET }}
           test $? -ne 0 && echo “Bucket ${{ env.BUCKET }} doesn't exist, creating..." && gcloud storage buckets create gs://${{ env.BUCKET }} --project=${{ env.GOOGLE_PROJECT_ID }} --location=EU && exit 0
          
           echo "Bucket ${{ env.BUCKET }} already exists."
