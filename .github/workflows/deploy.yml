@@ -51,6 +51,8 @@ jobs:
 
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v2
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
         with:
           terraform_version: "1.8.1"
 
@@ -58,7 +60,7 @@ jobs:
         working-directory: infrastructure
         env:
           GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
-        run: TF_LOG=DEBUG terraform init -backend-config="bucket=${{ env.BUCKET }}"
+        run: terraform init -backend-config="bucket=${{ env.BUCKET }}"
 
       - name: Terraform Plan
         working-directory: infrastructure
