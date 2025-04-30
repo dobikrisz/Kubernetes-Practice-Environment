@@ -44,11 +44,11 @@ jobs:
 
       - name: Build Images
         run: |
-          docker build -f "VM images/jumpbox" -t ${{ env.REGION }}-docker.pkg.dev/[PROJECT-ID]/${{ env.REPO_NAME }}/jumpbox:latest .
+          docker build -f "VM images/jumpbox" -t ${{ env.REGION }}-docker.pkg.dev/${{ env.GOOGLE_PROJECT_ID }}/${{ env.REPO_NAME }}/jumpbox:latest .
 
       - name: Push Docker image
         env:
           GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
         run: |
-          docker push ${{ env.REGION }}-docker.pkg.dev/[PROJECT-ID]/${{ env.REPO_NAME }}/jumpbox:latest
+          docker push ${{ env.REGION }}-docker.pkg.dev/${{ env.GOOGLE_PROJECT_ID }}/${{ env.REPO_NAME }}/jumpbox:latest
 
