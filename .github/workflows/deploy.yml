@@ -22,7 +22,7 @@ jobs:
     env:
       GOOGLE_PROJECT_ID: gke-sandbox-448713
       REGION: europe-west3
-      REPO_NAME: gke-vm
+      BUCKET: k8s-backend-448713
 
     steps:
       - name: Checkout code
@@ -35,6 +35,19 @@ jobs:
           service_account: "github-actions-sa@${{ env.GOOGLE_PROJECT_ID }}.iam.gserviceaccount.com"
           token_format: 'access_token'
           access_token_lifetime: '3600s'
+
+      - name: Create Backend Bucket
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
+        run: |
+          if ! gsutil ls -b gs://$BUCKET &>/dev/null; then
+            echo "Bucket does not exist. Creating bucket..."
+  
+            gcloud storage buckets create gs://$BUCKET --project=${{ env.GOOGLE_PROJECT_ID }} --location=EU
+          else
+            echo "Bucket $BUCKET already exists."
+          fi
+          
 
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v2
@@ -51,12 +64,18 @@ jobs:
         working-directory: infrastructure
         env:
           GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
+          TF_VAR_PROJECT_ID: ${{ env.GOOGLE_PROJECT_ID }}
+          TF_VAR_REGION: ${{ env.REGION }}
+          TF_VAR_BUCKET: ${{ env.BUCKET }}
         run: terraform plan 
 
       - name: Terraform Apply
         working-directory: infrastructure
         env:
           GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
+          TF_VAR_PROJECT_ID: ${{ env.GOOGLE_PROJECT_ID }}
+          TF_VAR_REGION: ${{ env.REGION }}
+          TF_VAR_BUCKET: ${{ env.BUCKET }}
         run: terraform apply --auto-approve 
             
 
