@@ -16,11 +16,16 @@ resource "google_compute_instance" "default" {
       image = local.vm_image
       size = 10
     }
+
   }
 
   network_interface {
     network = google_compute_network.vpc_network.id
     subnetwork = google_compute_subnetwork.k8s-subnet.id
+    
+    access_config {
+      // Ephemeral public IP
+    }
   }
 
   metadata_startup_script = file("../vm_config/jumpbox/startup.sh")
