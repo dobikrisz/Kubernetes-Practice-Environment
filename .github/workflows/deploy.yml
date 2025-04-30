@@ -40,10 +40,10 @@ jobs:
         env:
           GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
         run: |
-          gsutil ls | grep "$BUCKET_NAME"
-          test $? -ne 0 && echo “Bucket $BUCKET_NAME doesn't exist, creating..." && gcloud storage buckets create gs://$BUCKET --project=${{ env.GOOGLE_PROJECT_ID }} --location=EU && exit 0
+          gsutil ls | grep ${{ env.BUCKET }}
+          test $? -ne 0 && echo “Bucket ${{ env.BUCKET }} doesn't exist, creating..." && gcloud storage buckets create gs://${{ env.BUCKET }} --project=${{ env.GOOGLE_PROJECT_ID }} --location=EU && exit 0
          
-          echo "Bucket $BUCKET already exists."
+          echo "Bucket ${{ env.BUCKET }} already exists."
           
 
       - name: Set up Terraform
