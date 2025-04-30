@@ -1,0 +1,53 @@
+name: Build Docker Images
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push or pull request events but only for the "main" branch
+  push:
+    branches: [ "main" ]
+    paths:
+      - 'VM images/**'
+  pull_request:
+    branches: [ "main" ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    permissions:
+      id-token: write
+      contents: read
+
+    env:
+      GOOGLE_PROJECT_ID: gke-sandbox-448713
+      REGION: europe-west3
+      REPO_NAME: gke-vm
+
+    steps:
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: "projects/1058418169124/locations/global/workloadIdentityPools/github/providers/github-actions-provider"
+          service_account: "github-actions-sa@${{ env.GOOGLE_PROJECT_ID }}.iam.gserviceaccount.com"
+          token_format: 'access_token'
+          access_token_lifetime: '3600s'
+
+      - name: Set up Docker for Artifact Registry
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
+        run: |
+            gcloud auth configure-docker ${{ env.REGION }}-docker.pkg.dev
+
+      - name: Build Images
+        run: |
+          docker build -f "VM images/jumpbox" -t ${{ env.REGION }}-docker.pkg.dev/[PROJECT-ID]/${{ env.REPO_NAME }}/jumpbox:latest .
+
+      - name: Push Docker image
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
+        run: |
+          docker push ${{ env.REGION }}-docker.pkg.dev/[PROJECT-ID]/${{ env.REPO_NAME }}/jumpbox:latest
+
