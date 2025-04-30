@@ -13,7 +13,7 @@ wget -q --https-only \
         -P downloads \
         -i downloads-$(dpkg --print-architecture).txt
 
-mkdir -p downloads/{client, cni-plugins, controller, worker} && \
+mkdir -p downloads/client downloads/cni-plugins downloads/controller downloads/worker && \
     ARCH=$(dpkg --print-architecture) && \
     echo "Detected ARCH: $ARCH" && \
     tar -xvf downloads/crictl-v1.32.0-linux-${ARCH}.tar.gz -C downloads/worker/ && \
@@ -37,6 +37,9 @@ mkdir -p downloads/{client, cni-plugins, controller, worker} && \
 
 rm -rf downloads/*gz
 
-chmod +x downloads/{client,cni-plugins,controller,worker}/*
+chmod +x downloads/client/* && \
+chmod +x downloads/cni-plugins/* && \
+chmod +x downloads/controller/* && \
+chmod +x downloads/worker/*
 
 cp downloads/client/kubectl/usr/local/bin/
