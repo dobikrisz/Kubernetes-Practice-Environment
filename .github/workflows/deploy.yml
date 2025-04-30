@@ -58,7 +58,7 @@ jobs:
         working-directory: infrastructure
         env:
           GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
-        run: terraform init
+        run: terraform init -backend-config="bucket=${{ env.BUCKET }}"
 
       - name: Terraform Plan
         working-directory: infrastructure
@@ -66,7 +66,6 @@ jobs:
           GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
           TF_VAR_PROJECT_ID: ${{ env.GOOGLE_PROJECT_ID }}
           TF_VAR_REGION: ${{ env.REGION }}
-          TF_VAR_BUCKET: ${{ env.BUCKET }}
         run: terraform plan 
 
       - name: Terraform Apply
@@ -75,7 +74,6 @@ jobs:
           GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
           TF_VAR_PROJECT_ID: ${{ env.GOOGLE_PROJECT_ID }}
           TF_VAR_REGION: ${{ env.REGION }}
-          TF_VAR_BUCKET: ${{ env.BUCKET }}
         run: terraform apply --auto-approve 
             
 
