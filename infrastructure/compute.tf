@@ -21,10 +21,6 @@ resource "google_compute_instance" "default" {
   network_interface {
     network = google_compute_network.vpc_network.id
     subnetwork = google_compute_subnetwork.k8s-subnet.id
-
-    access_config {
-      // Ephemeral public IP
-    }
   }
 
   metadata_startup_script = file("../vm_config/jumpbox/startup.sh")
@@ -38,14 +34,14 @@ resource "google_compute_instance" "default" {
 }
 
 resource "google_compute_firewall" "default" {
-  name    = "allow-http-https"
+  name    = "allow-internal-ssh"
   network = google_compute_network.vpc_network.id
 
   allow {
     protocol = "tcp"
-    ports    = ["80", "443"]
+    ports    = ["80", "443", "22"]
   }
 
   target_tags = ["kubernetes-server"]
-  source_ranges = ["0.0.0.0/0"]
+  source_ranges = [google_compute_subnetwork.k8s-subnet.ip_cidr_range]
 }
