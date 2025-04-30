@@ -5,7 +5,3 @@ variable "REGION" {
 variable "PROJECT_ID" {
     type = string
 }
-
-variable "BUCKET" {
-    type = string
-}
