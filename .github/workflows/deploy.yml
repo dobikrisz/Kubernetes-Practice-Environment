@@ -58,7 +58,7 @@ jobs:
         working-directory: infrastructure
         env:
           GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
-        run: terraform init -backend-config="bucket=${{ env.BUCKET }},impersonate_service_account=github-actions-sa@${{ env.GOOGLE_PROJECT_ID }}.iam.gserviceaccount.com"
+        run: TF_LOG=DEBUG terraform init -backend-config="bucket=${{ env.BUCKET }}"
 
       - name: Terraform Plan
         working-directory: infrastructure
