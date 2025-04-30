@@ -1,5 +1,5 @@
 locals {
-  vm_image = "debian-cloud/debian-12-bookworm"
+  vm_image = "debian-cloud/debian-12"
 }
 
 resource "google_service_account" "default" {
@@ -38,7 +38,7 @@ resource "google_compute_instance" "default" {
 
 resource "google_compute_firewall" "default" {
   name    = "allow-http-https"
-  network = "default"
+  network = google_compute_network.vpc_network.id
 
   allow {
     protocol = "tcp"
