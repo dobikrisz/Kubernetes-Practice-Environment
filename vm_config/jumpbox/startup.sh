@@ -37,9 +37,9 @@ mkdir -p downloads/client downloads/cni-plugins downloads/controller downloads/w
 
 rm -rf downloads/*gz
 
-chmod +x downloads/client/* && \
-chmod +x downloads/cni-plugins/* && \
-chmod +x downloads/controller/* && \
-chmod +x downloads/worker/*
+sudo chmod +x downloads/client/* && \
+sudo chmod +x downloads/cni-plugins/* && \
+sudo chmod +x downloads/controller/* && \
+sudo chmod +x downloads/worker/*
 
-cp downloads/client/kubectl/usr/local/bin/
+sudo cp downloads/client/kubectl/usr/local/bin/
