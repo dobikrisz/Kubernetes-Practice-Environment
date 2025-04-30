@@ -38,7 +38,10 @@ RUN mkdir -p downloads/client downloads/cni-plugins downloads/controller downloa
 
 RUN rm -rf downloads/*gz
 
-RUN chmod +x downloads/{client,cni-plugins,controller,worker}/*
+RUN chmod +x downloads/client/* && \
+    chmod +x downloads/cni-plugins/* && \
+    chmod +x downloads/controller/* && \
+    chmod +x downloads/worker/*
 
 RUN cp downloads/client/kubectl /usr/local/bin/
 
