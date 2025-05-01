@@ -11,3 +11,15 @@ sudo sed -i 's/^root://' /root/.ssh/authorized_keys
 sudo chmod 600 /root/.ssh/authorized_keys
 
 sudo systemctl restart sshd
+
+apt-get update
+apt-get -y install socat conntrack ipset kmod
+
+swapoff -a
+mkdir -p \
+  /etc/cni/net.d \
+  /opt/cni/bin \
+  /var/lib/kubelet \
+  /var/lib/kube-proxy \
+  /var/lib/kubernetes \
+  /var/run/kubernetes

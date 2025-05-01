@@ -311,3 +311,111 @@ systemctl daemon-reload
 systemctl enable etcd
 systemctl start etcd
 EOF
+
+#--------------------------------------- Bootstrapping the Kubernetes Control Plane -----------------------------------------------
+
+scp -o StrictHostKeyChecking=no \
+  downloads/controller/kube-apiserver \
+  downloads/controller/kube-controller-manager \
+  downloads/controller/kube-scheduler \
+  downloads/client/kubectl \
+  units/kube-apiserver.service \
+  units/kube-controller-manager.service \
+  units/kube-scheduler.service \
+  configs/kube-scheduler.yaml \
+  configs/kube-apiserver-to-kubelet.yaml \
+  root@server:~/
+
+# Provision the Kubernetes Control Plane
+ssh -o StrictHostKeyChecking=no root@server <<EOF
+mkdir -p /etc/kubernetes/config
+mv kube-apiserver \
+  kube-controller-manager \
+  kube-scheduler kubectl \
+  /usr/local/bin/
+mkdir -p /var/lib/kubernetes/
+mv ca.crt ca.key \
+  kube-api-server.key kube-api-server.crt \
+  service-accounts.key service-accounts.crt \
+  encryption-config.yaml \
+  /var/lib/kubernetes/
+mv kube-apiserver.service \
+  /etc/systemd/system/kube-apiserver.service
+mv kube-controller-manager.kubeconfig /var/lib/kubernetes/
+mv kube-controller-manager.service /etc/systemd/system/
+mv kube-scheduler.kubeconfig /var/lib/kubernetes/
+mv kube-scheduler.yaml /etc/kubernetes/config/
+mv kube-scheduler.service /etc/systemd/system/
+systemctl daemon-reload
+systemctl enable kube-apiserver \
+  kube-controller-manager kube-scheduler
+systemctl start kube-apiserver \
+  kube-controller-manager kube-scheduler
+EOF
+
+# RBAC for Kubelet Authorization
+ssh -o StrictHostKeyChecking=no root@server <<EOF
+kubectl apply -f kube-apiserver-to-kubelet.yaml \
+  --kubeconfig admin.kubeconfig
+EOF
+
+#--------------------------------------- Bootstrapping the Kubernetes Worker Nodes -----------------------------------------------
+
+for HOST in node-0 node-1; do
+  SUBNET=$(grep ${HOST} machines.txt | cut -d " " -f 4)
+  sed "s|SUBNET|$SUBNET|g" \
+    configs/10-bridge.conf > 10-bridge.conf
+
+  sed "s|SUBNET|$SUBNET|g" \
+    configs/kubelet-config.yaml > kubelet-config.yaml
+
+  scp 10-bridge.conf kubelet-config.yaml \
+  root@${HOST}:~/
+done
+
+for HOST in node-0 node-1; do
+  scp \
+    downloads/worker/* \
+    downloads/client/kubectl \
+    configs/99-loopback.conf \
+    configs/containerd-config.toml \
+    configs/kube-proxy-config.yaml \
+    units/containerd.service \
+    units/kubelet.service \
+    units/kube-proxy.service \
+    root@${HOST}:~/
+done
+
+for HOST in node-0 node-1; do
+  scp \
+    downloads/cni-plugins/* \
+    root@${HOST}:~/cni-plugins/
+done
+
+# Provisioning a Kubernetes Worker Node
+for HOST in node-0 node-1; do
+  ssh -o StrictHostKeyChecking=no root@${HOST} <<EOF
+  mv crictl kube-proxy kubelet runc \
+    /usr/local/bin/
+  mv containerd containerd-shim-runc-v2 containerd-stress /bin/
+  mv cni-plugins/* /opt/cni/bin/
+  mv 10-bridge.conf 99-loopback.conf /etc/cni/net.d/
+  modprobe br-netfilter
+  echo "br-netfilter" >> /etc/modules-load.d/modules.conf
+  echo "net.bridge.bridge-nf-call-iptables = 1" \
+    >> /etc/sysctl.d/kubernetes.conf
+  echo "net.bridge.bridge-nf-call-ip6tables = 1" \
+    >> /etc/sysctl.d/kubernetes.conf
+  sysctl -p /etc/sysctl.d/kubernetes.conf
+  mkdir -p /etc/containerd/
+  mv containerd-config.toml /etc/containerd/config.toml
+  mv containerd.service /etc/systemd/system/
+  mv kubelet-config.yaml /var/lib/kubelet/
+  mv kubelet.service /etc/systemd/system/
+  mv kube-proxy-config.yaml /var/lib/kube-proxy/
+  mv kube-proxy.service /etc/systemd/system/
+  systemctl daemon-reload
+  systemctl enable containerd kubelet kube-proxy
+  systemctl start containerd kubelet kube-proxy
+EOF
+done
