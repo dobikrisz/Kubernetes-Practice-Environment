@@ -134,7 +134,6 @@ resource "google_compute_instance" "jumpbox" {
     node0_ip  = google_compute_instance.node0.network_interface[0].network_ip
     node1_ip  = google_compute_instance.node1.network_interface[0].network_ip
     ssh-keys = "root:${tls_private_key.jumpbox_key.public_key_openssh}"
-    private_key = tls_private_key.jumpbox_key.private_key_pem
   }
 
   metadata_startup_script = file("../vm_config/jumpbox/startup.sh")
@@ -146,4 +145,6 @@ resource "google_compute_instance" "jumpbox" {
   }
 
   tags = ["kubernetes-server"]
+
+  depends_on = [ google_secret_manager_secret_version.ssh_private_key_version ]
 }
