@@ -154,7 +154,7 @@ scp -o StrictHostKeyChecking=no \
   ca.key ca.crt \
   kube-api-server.key kube-api-server.crt \
   service-accounts.key service-accounts.crt \
-  root@server:~/
+  root@server:/root/
 
 #-------------------------------------------- Kubernetes Config Files ------------------------------------------------------
 
@@ -279,7 +279,7 @@ done
 scp -o StrictHostKeyChecking=no admin.kubeconfig \
   kube-controller-manager.kubeconfig \
   kube-scheduler.kubeconfig \
-  root@server:~/
+  root@server:/root/
 
 #---------------------------------- Generating the Data Encryption Config and Key -----------------------------------------------
 
@@ -290,7 +290,7 @@ export ENCRYPTION_KEY=$(head -c 32 /dev/urandom | base64)
 envsubst < configs/encryption-config.yaml \
   > encryption-config.yaml
 
-scp -o StrictHostKeyChecking=no encryption-config.yaml root@server:~/
+scp -o StrictHostKeyChecking=no encryption-config.yaml root@server:/root/
 
 #---------------------------------------- Bootstrapping the etcd Cluster ---------------------------------------------------------
 
@@ -298,7 +298,7 @@ scp -o StrictHostKeyChecking=no \
   downloads/controller/etcd \
   downloads/client/etcdctl \
   units/etcd.service \
-  root@server:~/
+  root@server:/root/
 
 ssh -o StrictHostKeyChecking=no root@server <<EOF
 mv etcd etcdctl /usr/local/bin/
@@ -324,7 +324,7 @@ scp -o StrictHostKeyChecking=no \
   units/kube-scheduler.service \
   configs/kube-scheduler.yaml \
   configs/kube-apiserver-to-kubelet.yaml \
-  root@server:~/
+  root@server:/root/
 
 # Provision the Kubernetes Control Plane
 ssh -o StrictHostKeyChecking=no root@server <<EOF
