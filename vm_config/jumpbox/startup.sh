@@ -56,15 +56,17 @@ EOF
 
 ssh-keygen -t rsa -b 4096 -f /root/.ssh/id_rsa -N ""
 
+PUB_KEY=$(cat /root/.ssh/id_rsa.pub)
+
 while read IP FQDN HOST SUBNET; do
-  ssh-copy-id root@${IP}
+  ssh -o StrictHostKeyChecking=no root@${IP} "mkdir -p /root/.ssh && echo '$PUB_KEY' >> /root/.ssh/authorized_keys && chmod 600 /root/.ssh/authorized_keys"
 done < machines.txt
 
 while read IP FQDN HOST SUBNET; do
     CMD="sed -i 's/^127.0.1.1.*/127.0.1.1\t${FQDN} ${HOST}/' /etc/hosts"
-    ssh -n root@${IP} "$CMD"
-    ssh -n root@${IP} hostnamectl set-hostname ${HOST}
-    ssh -n root@${IP} systemctl restart systemd-hostnamed
+    ssh -o StrictHostKeyChecking=no -n root@${IP} "$CMD"
+    ssh -o StrictHostKeyChecking=no -n root@${IP} hostnamectl set-hostname ${HOST}
+    ssh -o StrictHostKeyChecking=no -n root@${IP} systemctl restart systemd-hostnamed
 done < machines.txt
 
 echo "" > hosts
