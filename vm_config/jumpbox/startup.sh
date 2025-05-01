@@ -53,22 +53,22 @@ EOF
 ssh-keygen -t rsa -b 4096 -f /root/.ssh/id_rsa -N ""
 
 while read IP FQDN HOST SUBNET; do
-  ssh-copy-id root@${IP}
+  ssh-copy-id root@$${IP}
 done < machines.txt
 
 while read IP FQDN HOST SUBNET; do
-    CMD="sed -i 's/^127.0.1.1.*/127.0.1.1\t${FQDN} ${HOST}/' /etc/hosts"
-    ssh -n root@${IP} "$CMD"
-    ssh -n root@${IP} hostnamectl set-hostname ${HOST}
-    ssh -n root@${IP} systemctl restart systemd-hostnamed
+    CMD="sed -i 's/^127.0.1.1.*/127.0.1.1\t$${FQDN} $${HOST}/' /etc/hosts"
+    ssh -n root@$${IP} "$$CMD"
+    ssh -n root@$${IP} hostnamectl set-hostname $${HOST}
+    ssh -n root@$${IP} systemctl restart systemd-hostnamed
 done < machines.txt
 
 echo "" > hosts
 echo "# Kubernetes The Hard Way" >> hosts
 
 while read IP FQDN HOST SUBNET; do
-    ENTRY="${IP} ${FQDN} ${HOST}"
-    echo $ENTRY >> hosts
+    ENTRY="$${IP} $${FQDN} $${HOST}"
+    echo $$ENTRY >> hosts
 done < machines.txt
 
 sudo cat hosts >> /etc/hosts
