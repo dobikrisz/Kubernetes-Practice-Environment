@@ -43,3 +43,32 @@ sudo chmod +x downloads/controller/* && \
 sudo chmod +x downloads/worker/*
 
 sudo cp downloads/client/kubectl /usr/local/bin/
+
+cat <<EOF > machines.txt
+${server_ip} server.kubernetes.local server
+${node0_ip} node-0.kubernetes.local node-0 10.200.0.0/24
+${node1_ip} node-1.kubernetes.local node-1 10.200.1.0/24
+EOF
+
+ssh-keygen -t rsa -b 4096 -f /root/.ssh/id_rsa -N ""
+
+while read IP FQDN HOST SUBNET; do
+  ssh-copy-id root@${IP}
+done < machines.txt
+
+while read IP FQDN HOST SUBNET; do
+    CMD="sed -i 's/^127.0.1.1.*/127.0.1.1\t${FQDN} ${HOST}/' /etc/hosts"
+    ssh -n root@${IP} "$CMD"
+    ssh -n root@${IP} hostnamectl set-hostname ${HOST}
+    ssh -n root@${IP} systemctl restart systemd-hostnamed
+done < machines.txt
+
+echo "" > hosts
+echo "# Kubernetes The Hard Way" >> hosts
+
+while read IP FQDN HOST SUBNET; do
+    ENTRY="${IP} ${FQDN} ${HOST}"
+    echo $ENTRY >> hosts
+done < machines.txt
+
+sudo cat hosts >> /etc/hosts
