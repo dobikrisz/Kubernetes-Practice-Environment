@@ -1,3 +1,8 @@
+resource "tls_private_key" "jumpbox_key" {
+  algorithm = "RSA"
+  rsa_bits  = 4096
+}
+
 resource "google_secret_manager_secret" "ssh_private_key" {
   secret_id     = "ssh-private-key"
   replication {

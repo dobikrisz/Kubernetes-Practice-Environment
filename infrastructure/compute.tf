@@ -2,11 +2,6 @@ locals {
   vm_image = "debian-cloud/debian-12"
 }
 
-resource "tls_private_key" "jumpbox_key" {
-  algorithm = "RSA"
-  rsa_bits  = 4096
-}
-
 resource "google_service_account" "default" {
   account_id   = "kubernetes-vm-sa"
   display_name = "Custom SA for Kubernetes cluster host VM Instances"
