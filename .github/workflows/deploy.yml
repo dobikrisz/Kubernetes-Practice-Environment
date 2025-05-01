@@ -73,12 +73,12 @@ jobs:
           TF_VAR_ZONE: ${{ env.ZONE }}
         run: terraform apply --auto-approve 
 
-      - name: Terraform Destroy
-        working-directory: infrastructure
-        env:
-          TF_VAR_PROJECT_ID: ${{ env.GOOGLE_PROJECT_ID }}
-          TF_VAR_REGION: ${{ env.REGION }}
-          TF_VAR_ZONE: ${{ env.ZONE }}
-        run: terraform destroy --auto-approve 
+   #  - name: Terraform Destroy
+   #    working-directory: infrastructure
+   #    env:
+   #      TF_VAR_PROJECT_ID: ${{ env.GOOGLE_PROJECT_ID }}
+   #      TF_VAR_REGION: ${{ env.REGION }}
+   #      TF_VAR_ZONE: ${{ env.ZONE }}
+   #    run: terraform destroy --auto-approve 
             
 
