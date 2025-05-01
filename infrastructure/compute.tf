@@ -141,5 +141,5 @@ resource "google_compute_instance" "jumpbox" {
 
   tags = ["kubernetes-server"]
 
-  depends_on = [ google_secret_manager_secret_version.ssh_private_key_version ]
+  depends_on = [ google_secret_manager_secret_version.ssh_private_key_version, google_project_service.compute ]
 }

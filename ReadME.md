@@ -2,7 +2,7 @@
 
 ## Introduction
 
-This repository is an implementation of 
+This repository is an implementation of the [Kubernetes the hard way](https://github.com/kelseyhightower/kubernetes-the-hard-way) repository and automatically provision to 
 
 
 

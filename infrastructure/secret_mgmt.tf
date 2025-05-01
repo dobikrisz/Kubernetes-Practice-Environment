@@ -9,6 +9,7 @@ resource "google_secret_manager_secret" "ssh_private_key" {
     auto {
     }
   }
+  depends_on = [ google_project_service.secret_manager ]
 }
 
 resource "google_secret_manager_secret_version" "ssh_private_key_version" {
