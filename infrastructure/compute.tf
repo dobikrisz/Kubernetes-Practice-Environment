@@ -156,29 +156,3 @@ resource "google_compute_instance" "jumpbox" {
 
   tags = ["kubernetes-server"]
 }
-
-resource "google_compute_firewall" "default" {
-  name    = "allow-internal-ssh"
-  network = google_compute_network.vpc_network.id
-
-  allow {
-    protocol = "tcp"
-    ports    = ["80", "443", "22"]
-  }
-
-  target_tags = ["kubernetes-server"]
-  source_ranges = [google_compute_subnetwork.k8s-subnet.ip_cidr_range]
-}
-
-resource "google_compute_firewall" "external-ssh" {
-  name    = "allow-external-ssh"
-  network = google_compute_network.vpc_network.id
-
-  allow {
-    protocol = "tcp"
-    ports    = ["22"]
-  }
-
-  target_tags = ["kubernetes-server"]
-  source_ranges = ["0.0.0.0/0"]
-}

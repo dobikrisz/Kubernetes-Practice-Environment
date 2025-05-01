@@ -56,3 +56,43 @@ resource "google_compute_firewall" "allow_egress_to_internet" {
 
   destination_ranges = ["0.0.0.0/0"] 
 }
+
+resource "google_compute_firewall" "allow_k8s_api_from_jumpbox" {
+  name    = "allow-k8s-api-from-jumpbox"
+  network = google_compute_network.vpc_network.id
+
+  direction = "INGRESS"
+  source_ranges = [google_compute_subnetwork.k8s-subnet.ip_cidr_range]
+  target_tags   = ["kubernetes-server"]
+
+  allow {
+    protocol = "tcp"
+    ports    = ["6443"]
+  }
+}
+
+resource "google_compute_firewall" "default" {
+  name    = "allow-internal-ssh"
+  network = google_compute_network.vpc_network.id
+
+  allow {
+    protocol = "tcp"
+    ports    = ["80", "443", "22"]
+  }
+
+  target_tags = ["kubernetes-server"]
+  source_ranges = [google_compute_subnetwork.k8s-subnet.ip_cidr_range]
+}
+
+resource "google_compute_firewall" "external-ssh" {
+  name    = "allow-external-ssh"
+  network = google_compute_network.vpc_network.id
+
+  allow {
+    protocol = "tcp"
+    ports    = ["22"]
+  }
+
+  target_tags = ["kubernetes-server"]
+  source_ranges = ["0.0.0.0/0"]
+}
