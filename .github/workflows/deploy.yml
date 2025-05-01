@@ -20,10 +20,10 @@ jobs:
       contents: read
 
     env:
-      GOOGLE_PROJECT_ID: gke-sandbox-448713
-      REGION: europe-west3
-      ZONE: europe-west3-a
-      BUCKET: k8s-backend-448713
+      GOOGLE_PROJECT_ID: ${{ secrets.GOOGLE_PROJECT_ID }}
+      REGION: ${{ secrets.REGION }}
+      ZONE: ${{ secrets.ZONE }}
+      BUCKET: ${{ secrets.BUCKET }}
 
     steps:
       - name: Checkout code
