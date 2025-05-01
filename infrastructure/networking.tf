@@ -67,7 +67,7 @@ resource "google_compute_firewall" "allow_k8s_api_from_jumpbox" {
 
   allow {
     protocol = "tcp"
-    ports    = ["6443"]
+    ports    = ["6443", "2379-2380", "10250", "10251", "10252", "30000-32767"]
   }
 }
 
