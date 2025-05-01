@@ -48,7 +48,7 @@ server_ip=$(curl -s "http://metadata.google.internal/computeMetadata/v1/instance
 node0_ip=$(curl -s "http://metadata.google.internal/computeMetadata/v1/instance/attributes/node0_ip" -H "Metadata-Flavor: Google")
 node1_ip=$(curl -s "http://metadata.google.internal/computeMetadata/v1/instance/attributes/node1_ip" -H "Metadata-Flavor: Google")
 public_key=$(curl -s "http://metadata.google.internal/computeMetadata/v1/instance/attributes/ssh-keys" -H "Metadata-Flavor: Google")
-private_key=$($(gcloud secrets versions access latest --secret=ssh-private-key))
+private_key=$(gcloud secrets versions access latest --secret=ssh-private-key)
 
 cat <<EOF > machines.txt
 ${server_ip} server.kubernetes.local server
