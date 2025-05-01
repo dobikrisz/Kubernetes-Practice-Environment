@@ -34,7 +34,7 @@ resource "google_compute_instance" "server" {
   }
 
   metadata = {
-    ssh-keys = "root=${tls_private_key.jumpbox_key.public_key_openssh}"
+    ssh-keys = "root:${tls_private_key.jumpbox_key.public_key_openssh}"
   }
 
   metadata_startup_script = templatefile("../vm_config/server/startup.sh", {})
@@ -69,7 +69,7 @@ resource "google_compute_instance" "node0" {
   }
 
   metadata = {
-    ssh-keys = "root=${tls_private_key.jumpbox_key.public_key_openssh}"
+    ssh-keys = "root:${tls_private_key.jumpbox_key.public_key_openssh}"
   }
 
   metadata_startup_script = templatefile("../vm_config/node-0/startup.sh", {})
@@ -104,7 +104,7 @@ resource "google_compute_instance" "node1" {
   }
 
   metadata = {
-    ssh-keys = "root=${tls_private_key.jumpbox_key.public_key_openssh}"
+    ssh-keys = "root:${tls_private_key.jumpbox_key.public_key_openssh}"
   }
 
   metadata_startup_script = templatefile("../vm_config/node-1/startup.sh", {})
@@ -142,7 +142,7 @@ resource "google_compute_instance" "jumpbox" {
     server_ip = google_compute_instance.server.network_interface[0].network_ip
     node0_ip  = google_compute_instance.node0.network_interface[0].network_ip
     node1_ip  = google_compute_instance.node1.network_interface[0].network_ip
-    ssh-keys = "root=${tls_private_key.jumpbox_key.public_key_openssh}"
+    ssh-keys = "root:${tls_private_key.jumpbox_key.public_key_openssh}"
     private_key = tls_private_key.jumpbox_key.private_key_pem
   }
 
