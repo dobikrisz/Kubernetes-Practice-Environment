@@ -28,9 +28,6 @@ resource "google_compute_instance" "server" {
     network = google_compute_network.vpc_network.id
     subnetwork = google_compute_subnetwork.k8s-subnet.id
     
-    access_config {
-      // Ephemeral public IP
-    }
   }
 
   metadata = {
@@ -63,9 +60,6 @@ resource "google_compute_instance" "node0" {
     network = google_compute_network.vpc_network.id
     subnetwork = google_compute_subnetwork.k8s-subnet.id
     
-    access_config {
-      // Ephemeral public IP
-    }
   }
 
   metadata = {
@@ -98,9 +92,6 @@ resource "google_compute_instance" "node1" {
     network = google_compute_network.vpc_network.id
     subnetwork = google_compute_subnetwork.k8s-subnet.id
     
-    access_config {
-      // Ephemeral public IP
-    }
   }
 
   metadata = {

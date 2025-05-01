@@ -36,26 +36,26 @@ resource "google_compute_router_nat" "nat_gateway" {
   }
 }
 
-resource "google_compute_firewall" "allow_egress_to_internet" {
-  name    = "allow-egress-to-internet"
-  network = google_compute_network.vpc_network.id
-
-  allow {
-    protocol = "tcp"
-    ports    = ["0-65535"]
-  }
-  allow {
-    protocol = "udp"
-    ports    = ["0-65535"]
-  }
-  allow {
-    protocol = "icmp"
-  }
-
-  direction = "EGRESS"
-
-  destination_ranges = ["0.0.0.0/0"] 
-}
+#resource "google_compute_firewall" "allow_egress_to_internet" {
+#  name    = "allow-egress-to-internet"
+#  network = google_compute_network.vpc_network.id
+#
+#  allow {
+#    protocol = "tcp"
+#    ports    = ["0-65535"]
+#  }
+#  allow {
+#    protocol = "udp"
+#    ports    = ["0-65535"]
+#  }
+#  allow {
+#    protocol = "icmp"
+#  }
+#
+#  direction = "EGRESS"
+#
+#  destination_ranges = ["0.0.0.0/0"] 
+#}
 
 resource "google_compute_firewall" "allow_k8s_api_from_jumpbox" {
   name    = "allow-k8s-api-from-jumpbox"
@@ -72,7 +72,7 @@ resource "google_compute_firewall" "allow_k8s_api_from_jumpbox" {
   priority = 1000
 }
 
-resource "google_compute_firewall" "default" {
+resource "google_compute_firewall" "allow-internal-ssh" {
   name    = "allow-internal-ssh"
   network = google_compute_network.vpc_network.id
 
