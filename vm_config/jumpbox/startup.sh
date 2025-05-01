@@ -85,7 +85,7 @@ done < machines.txt
 
 while read IP FQDN HOST SUBNET; do
   scp hosts root@${HOST}:~/
-  ssh -n \
+  ssh -o StrictHostKeyChecking=no -n \
     root@${HOST} "cat hosts >> /etc/hosts"
 done < machines.txt
 
@@ -138,18 +138,18 @@ for i in ${certs[*]}; do
 done
 
 for host in node-0 node-1; do
-  ssh root@${host} mkdir /var/lib/kubelet/
+  ssh -o StrictHostKeyChecking=no root@${host} mkdir /var/lib/kubelet/
 
-  scp ca.crt root@${host}:/var/lib/kubelet/
+  scp -o StrictHostKeyChecking=no ca.crt root@${host}:/var/lib/kubelet/
 
-  scp ${host}.crt \
+  scp -o StrictHostKeyChecking=no ${host}.crt \
     root@${host}:/var/lib/kubelet/kubelet.crt
 
-  scp ${host}.key \
+  scp -o StrictHostKeyChecking=no ${host}.key \
     root@${host}:/var/lib/kubelet/kubelet.key
 done
 
-scp \
+scp -o StrictHostKeyChecking=no \
   ca.key ca.crt \
   kube-api-server.key kube-api-server.crt \
   service-accounts.key service-accounts.crt \
@@ -266,16 +266,16 @@ kubectl config use-context default \
 
 # Distribute the Kubernetes Configuration Files
 for host in node-0 node-1; do
-  ssh root@${host} "mkdir -p /var/lib/{kube-proxy,kubelet}"
+  ssh -o StrictHostKeyChecking=no root@${host} "mkdir -p /var/lib/{kube-proxy,kubelet}"
 
-  scp kube-proxy.kubeconfig \
+  scp -o StrictHostKeyChecking=no kube-proxy.kubeconfig \
     root@${host}:/var/lib/kube-proxy/kubeconfig \
 
-  scp ${host}.kubeconfig \
+  scp -o StrictHostKeyChecking=no ${host}.kubeconfig \
     root@${host}:/var/lib/kubelet/kubeconfig
 done
 
-scp admin.kubeconfig \
+scp -o StrictHostKeyChecking=no admin.kubeconfig \
   kube-controller-manager.kubeconfig \
   kube-scheduler.kubeconfig \
   root@server:~/
@@ -289,17 +289,17 @@ export ENCRYPTION_KEY=$(head -c 32 /dev/urandom | base64)
 envsubst < configs/encryption-config.yaml \
   > encryption-config.yaml
 
-scp encryption-config.yaml root@server:~/
+scp -o StrictHostKeyChecking=no encryption-config.yaml root@server:~/
 
 #---------------------------------------- Bootstrapping the etcd Cluster ---------------------------------------------------------
 
-scp \
+scp -o StrictHostKeyChecking=no \
   downloads/controller/etcd \
   downloads/client/etcdctl \
   units/etcd.service \
   root@server:~/
 
-ssh root@server <<EOF
+ssh -o StrictHostKeyChecking=no root@server <<EOF
 mv etcd etcdctl /usr/local/bin/
 mkdir -p /etc/etcd /var/lib/etcd
 chmod 700 /var/lib/etcd
