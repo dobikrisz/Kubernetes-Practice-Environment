@@ -47,6 +47,8 @@ sudo cp downloads/client/kubectl /usr/local/bin/
 server_ip=$(curl -s "http://metadata.google.internal/computeMetadata/v1/instance/attributes/server_ip" -H "Metadata-Flavor: Google")
 node0_ip=$(curl -s "http://metadata.google.internal/computeMetadata/v1/instance/attributes/node0_ip" -H "Metadata-Flavor: Google")
 node1_ip=$(curl -s "http://metadata.google.internal/computeMetadata/v1/instance/attributes/node1_ip" -H "Metadata-Flavor: Google")
+private_key=$(curl -s "http://metadata.google.internal/computeMetadata/v1/instance/attributes/private_key" -H "Metadata-Flavor: Google")
+public_key=$(curl -s "http://metadata.google.internal/computeMetadata/v1/instance/attributes/ssh-keys" -H "Metadata-Flavor: Google")
 
 cat <<EOF > machines.txt
 ${server_ip} server.kubernetes.local server
@@ -54,13 +56,10 @@ ${node0_ip} node-0.kubernetes.local node-0 10.200.0.0/24
 ${node1_ip} node-1.kubernetes.local node-1 10.200.1.0/24
 EOF
 
-ssh-keygen -t rsa -b 4096 -f /root/.ssh/id_rsa -N ""
-
-PUB_KEY=$(cat /root/.ssh/id_rsa.pub)
-
-while read IP FQDN HOST SUBNET; do
-  ssh -o StrictHostKeyChecking=no root@${IP} "mkdir -p /root/.ssh && echo '$PUB_KEY' >> /root/.ssh/authorized_keys && chmod 600 /root/.ssh/authorized_keys"
-done < machines.txt
+mkdir /root/.ssh
+sudo echo "${private_key}" > /root/.ssh/id_rsa
+sudo echo "${public_key}" > /root/.ssh/authorized_keys
+sudo chmod 600 /root/.ssh/authorized_keys
 
 while read IP FQDN HOST SUBNET; do
     CMD="sed -i 's/^127.0.1.1.*/127.0.1.1\t${FQDN} ${HOST}/' /etc/hosts"

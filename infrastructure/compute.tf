@@ -34,9 +34,9 @@ resource "google_compute_instance" "server" {
   }
 
   metadata = {
-    ssh-keys = "root=${tls_private_key.jumpbox_key.public_key}"
+    ssh-keys = "root=${tls_private_key.jumpbox_key.public_key_openssh}"
   }
-  
+
   metadata_startup_script = templatefile("../vm_config/server/startup.sh", {})
   service_account {
     # Google recommends custom service accounts that have cloud-platform scope and permissions granted via IAM Roles.
@@ -69,7 +69,7 @@ resource "google_compute_instance" "node0" {
   }
 
   metadata = {
-    ssh-keys = "root=${tls_private_key.jumpbox_key.public_key}"
+    ssh-keys = "root=${tls_private_key.jumpbox_key.public_key_openssh}"
   }
 
   metadata_startup_script = templatefile("../vm_config/node-0/startup.sh", {})
@@ -104,7 +104,7 @@ resource "google_compute_instance" "node1" {
   }
 
   metadata = {
-    ssh-keys = "root=${tls_private_key.jumpbox_key.public_key}"
+    ssh-keys = "root=${tls_private_key.jumpbox_key.public_key_openssh}"
   }
 
   metadata_startup_script = templatefile("../vm_config/node-1/startup.sh", {})
@@ -143,6 +143,7 @@ resource "google_compute_instance" "jumpbox" {
     node0_ip  = google_compute_instance.node0.network_interface[0].network_ip
     node1_ip  = google_compute_instance.node1.network_interface[0].network_ip
     ssh-keys = "root=${tls_private_key.jumpbox_key.public_key}"
+    private_key = tls_private_key.jumpbox_key.private_key_pem
   }
 
   metadata_startup_script = file("../vm_config/jumpbox/startup.sh")
