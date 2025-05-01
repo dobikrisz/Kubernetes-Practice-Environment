@@ -138,6 +138,8 @@ for i in ${certs[*]}; do
     -out "${i}.crt"
 done
 
+sleep 5
+
 for host in node-0 node-1; do
   ssh -o StrictHostKeyChecking=no root@${host} mkdir /var/lib/kubelet/
 
