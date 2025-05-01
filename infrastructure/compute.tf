@@ -1,5 +1,6 @@
 locals {
   vm_image = "debian-cloud/debian-12"
+  machine_type = "n1-standard-1"
 }
 
 resource "google_service_account" "default" {
@@ -9,7 +10,7 @@ resource "google_service_account" "default" {
 
 resource "google_compute_instance" "server" {
   name         = "server"
-  machine_type = "n1-standard-1"
+  machine_type = local.machine_type
 
   boot_disk {
     initialize_params {
@@ -41,7 +42,7 @@ resource "google_compute_instance" "server" {
 
 resource "google_compute_instance" "node0" {
   name         = "node-0"
-  machine_type = "n1-standard-1"
+  machine_type = local.machine_type
 
   boot_disk {
     initialize_params {
@@ -73,7 +74,7 @@ resource "google_compute_instance" "node0" {
 
 resource "google_compute_instance" "node1" {
   name         = "node-1"
-  machine_type = "n1-standard-1"
+  machine_type = local.machine_type
 
   boot_disk {
     initialize_params {
@@ -105,7 +106,7 @@ resource "google_compute_instance" "node1" {
 
 resource "google_compute_instance" "jumpbox" {
   name         = "jumpbox"
-  machine_type = "n1-standard-1"
+  machine_type = local.machine_type
 
   boot_disk {
     initialize_params {
