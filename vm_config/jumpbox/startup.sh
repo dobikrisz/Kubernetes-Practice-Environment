@@ -45,7 +45,7 @@ sudo chmod +x downloads/worker/*
 sudo cp downloads/client/kubectl /usr/local/bin/
 
 cat <<EOF > machines.txt
-${server_ip} server.kubernetes.local server
+${server_ip} server.kubernetes.local server -
 ${node0_ip} node-0.kubernetes.local node-0 10.200.0.0/24
 ${node1_ip} node-1.kubernetes.local node-1 10.200.1.0/24
 EOF
@@ -68,7 +68,7 @@ echo "# Kubernetes The Hard Way" >> hosts
 
 while read IP FQDN HOST SUBNET; do
     ENTRY="$${IP} $${FQDN} $${HOST}"
-    echo $$ENTRY >> hosts
+    echo "$$ENTRY" >> /dev/null
 done < machines.txt
 
 sudo cat hosts >> /etc/hosts
