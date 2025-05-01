@@ -85,7 +85,7 @@ while read IP FQDN HOST SUBNET; do
 done < machines.txt
 
 while read IP FQDN HOST SUBNET; do
-  scp hosts root@${HOST}:~/
+  scp -o StrictHostKeyChecking=no hosts root@${HOST}:/root/
   ssh -o StrictHostKeyChecking=no -n \
     root@${HOST} "cat hosts >> /etc/hosts"
 done < machines.txt
@@ -137,8 +137,6 @@ for i in ${certs[*]}; do
     -CAcreateserial \
     -out "${i}.crt"
 done
-
-sleep 5
 
 for host in node-0 node-1; do
   ssh -o StrictHostKeyChecking=no root@${host} mkdir /var/lib/kubelet/
@@ -372,7 +370,7 @@ for HOST in node-0 node-1; do
     configs/kubelet-config.yaml > kubelet-config.yaml
 
   scp 10-bridge.conf kubelet-config.yaml \
-  root@${HOST}:~/
+  root@${HOST}:/root/
 done
 
 for HOST in node-0 node-1; do
@@ -385,13 +383,13 @@ for HOST in node-0 node-1; do
     units/containerd.service \
     units/kubelet.service \
     units/kube-proxy.service \
-    root@${HOST}:~/
+    root@${HOST}:/root/
 done
 
 for HOST in node-0 node-1; do
   scp \
     downloads/cni-plugins/* \
-    root@${HOST}:~/cni-plugins/
+    root@${HOST}:/root/cni-plugins/
 done
 
 # Provisioning a Kubernetes Worker Node
