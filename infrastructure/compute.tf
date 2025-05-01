@@ -121,11 +121,14 @@ resource "google_compute_instance" "jumpbox" {
     }
   }
 
-  metadata_startup_script = templatefile("../vm_config/jumpbox/startup.sh", {
+  metadata = {
     server_ip = google_compute_instance.server.network_interface[0].network_ip
     node0_ip  = google_compute_instance.node0.network_interface[0].network_ip
     node1_ip  = google_compute_instance.node1.network_interface[0].network_ip
-  })
+  }
+
+  metadata_startup_script = file("../vm_config/jumpbox/startup.sh")
+  
   service_account {
     # Google recommends custom service accounts that have cloud-platform scope and permissions granted via IAM Roles.
     email  = google_service_account.default.email
