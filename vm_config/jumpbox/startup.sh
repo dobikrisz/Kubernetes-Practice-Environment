@@ -419,3 +419,42 @@ for HOST in node-0 node-1; do
   systemctl start containerd kubelet kube-proxy
 EOF
 done
+
+#----------------------------------- Configuring kubectl for Remote Access ---------------------------------------------
+
+kubectl config set-cluster kubernetes-the-hard-way \
+  --certificate-authority=ca.crt \
+  --embed-certs=true \
+  --server=https://server.kubernetes.local:6443
+
+kubectl config set-credentials admin \
+  --client-certificate=admin.crt \
+  --client-key=admin.key
+
+kubectl config set-context kubernetes-the-hard-way \
+  --cluster=kubernetes-the-hard-way \
+  --user=admin
+
+kubectl config use-context kubernetes-the-hard-way
+
+#---------------------------------------- Provisioning Pod Network Routes -----------------------------------------------
+
+SERVER_IP=$(grep server machines.txt | cut -d " " -f 1)
+NODE_0_IP=$(grep node-0 machines.txt | cut -d " " -f 1)
+NODE_0_SUBNET=$(grep node-0 machines.txt | cut -d " " -f 4)
+NODE_1_IP=$(grep node-1 machines.txt | cut -d " " -f 1)
+NODE_1_SUBNET=$(grep node-1 machines.txt | cut -d " " -f 4)
+
+ssh root@server <<EOF
+  ip route add ${NODE_0_SUBNET} via ${NODE_0_IP}
+  ip route add ${NODE_1_SUBNET} via ${NODE_1_IP}
+EOF
+
+ssh root@node-0 <<EOF
+  ip route add ${NODE_1_SUBNET} via ${NODE_1_IP}
+EOF
+
+ssh root@node-1 <<EOF
+  ip route add ${NODE_0_SUBNET} via ${NODE_0_IP}
+EOF
+
