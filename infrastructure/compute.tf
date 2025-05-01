@@ -2,6 +2,11 @@ locals {
   vm_image = "debian-cloud/debian-12"
 }
 
+resource "tls_private_key" "jumpbox_key" {
+  algorithm = "RSA"
+  rsa_bits  = 4096
+}
+
 resource "google_service_account" "default" {
   account_id   = "kubernetes-vm-sa"
   display_name = "Custom SA for Kubernetes cluster host VM Instances"
@@ -28,6 +33,10 @@ resource "google_compute_instance" "server" {
     }
   }
 
+  metadata = {
+    ssh-keys = "root=${tls_private_key.jumpbox_key.public_key}"
+  }
+  
   metadata_startup_script = templatefile("../vm_config/server/startup.sh", {})
   service_account {
     # Google recommends custom service accounts that have cloud-platform scope and permissions granted via IAM Roles.
@@ -59,6 +68,10 @@ resource "google_compute_instance" "node0" {
     }
   }
 
+  metadata = {
+    ssh-keys = "root=${tls_private_key.jumpbox_key.public_key}"
+  }
+
   metadata_startup_script = templatefile("../vm_config/node-0/startup.sh", {})
   service_account {
     # Google recommends custom service accounts that have cloud-platform scope and permissions granted via IAM Roles.
@@ -88,6 +101,10 @@ resource "google_compute_instance" "node1" {
     access_config {
       // Ephemeral public IP
     }
+  }
+
+  metadata = {
+    ssh-keys = "root=${tls_private_key.jumpbox_key.public_key}"
   }
 
   metadata_startup_script = templatefile("../vm_config/node-1/startup.sh", {})
@@ -125,6 +142,7 @@ resource "google_compute_instance" "jumpbox" {
     server_ip = google_compute_instance.server.network_interface[0].network_ip
     node0_ip  = google_compute_instance.node0.network_interface[0].network_ip
     node1_ip  = google_compute_instance.node1.network_interface[0].network_ip
+    ssh-keys = "root=${tls_private_key.jumpbox_key.public_key}"
   }
 
   metadata_startup_script = file("../vm_config/jumpbox/startup.sh")
