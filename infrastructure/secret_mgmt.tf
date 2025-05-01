@@ -6,7 +6,10 @@ resource "tls_private_key" "jumpbox_key" {
 resource "google_secret_manager_secret" "ssh_private_key" {
   secret_id     = "ssh-private-key"
   replication {
-    auto {
+    user_managed {
+      replicas {
+        location = var.REGION
+      }
     }
   }
   depends_on = [ google_project_service.secret_manager ]
