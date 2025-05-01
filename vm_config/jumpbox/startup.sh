@@ -58,6 +58,7 @@ EOF
 
 mkdir /root/.ssh
 sudo echo "${private_key}" > /root/.ssh/id_rsa
+sudo chmod 700 /root/.ssh/id_rsa
 sudo echo "${public_key}" > /root/.ssh/authorized_keys
 sudo sed -i 's/^root://' /root/.ssh/authorized_keys
 sudo chmod 600 /root/.ssh/authorized_keys
@@ -266,7 +267,7 @@ kubectl config use-context default \
 
 # Distribute the Kubernetes Configuration Files
 for host in node-0 node-1; do
-  ssh -o StrictHostKeyChecking=no root@${host} "mkdir -p /var/lib/{kube-proxy,kubelet}"
+  ssh -o StrictHostKeyChecking=no root@${host} "mkdir -p /var/lib/kube-proxy /var/lib/kubelet"
 
   scp -o StrictHostKeyChecking=no kube-proxy.kubeconfig \
     root@${host}:/var/lib/kube-proxy/kubeconfig \
