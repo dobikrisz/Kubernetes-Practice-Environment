@@ -68,7 +68,7 @@ echo "# Kubernetes The Hard Way" >> hosts
 
 while read IP FQDN HOST SUBNET; do
     ENTRY="$${IP} $${FQDN} $${HOST}"
-    echo "$$ENTRY" >> /dev/null
+    echo "$$ENTRY" >> hosts
 done < machines.txt
 
 sudo cat hosts >> /etc/hosts
