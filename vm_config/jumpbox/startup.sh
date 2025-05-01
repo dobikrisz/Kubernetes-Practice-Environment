@@ -59,6 +59,7 @@ EOF
 mkdir /root/.ssh
 sudo echo "${private_key}" > /root/.ssh/id_rsa
 sudo echo "${public_key}" > /root/.ssh/authorized_keys
+sudo sed -i 's/^root://' /root/.ssh/authorized_keys
 sudo chmod 600 /root/.ssh/authorized_keys
 
 while read IP FQDN HOST SUBNET; do
