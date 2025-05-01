@@ -57,13 +57,13 @@ jobs:
         working-directory: infrastructure
         run: terraform init -backend-config="bucket=${{ env.BUCKET }}"
 
-      - name: Terraform Plan
-        working-directory: infrastructure
-        env:
-          TF_VAR_PROJECT_ID: ${{ env.GOOGLE_PROJECT_ID }}
-          TF_VAR_REGION: ${{ env.REGION }}
-          TF_VAR_ZONE: ${{ env.ZONE }}
-        run: terraform plan -lock-timeout=60s
+      # - name: Terraform Plan
+      #   working-directory: infrastructure
+      #   env:
+      #     TF_VAR_PROJECT_ID: ${{ env.GOOGLE_PROJECT_ID }}
+      #     TF_VAR_REGION: ${{ env.REGION }}
+      #     TF_VAR_ZONE: ${{ env.ZONE }}
+      #   run: terraform plan -lock-timeout=60s
 
       - name: Terraform Apply
         working-directory: infrastructure

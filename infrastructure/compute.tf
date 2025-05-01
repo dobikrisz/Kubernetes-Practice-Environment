@@ -28,7 +28,7 @@ resource "google_compute_instance" "server" {
     }
   }
 
-  metadata_startup_script = file("../vm_config/server/startup.sh")
+  metadata_startup_script = templatefile("../vm_config/server/startup.sh")
   service_account {
     # Google recommends custom service accounts that have cloud-platform scope and permissions granted via IAM Roles.
     email  = google_service_account.default.email
@@ -59,7 +59,7 @@ resource "google_compute_instance" "node0" {
     }
   }
 
-  metadata_startup_script = file("../vm_config/node-0/startup.sh")
+  metadata_startup_script = templatefile("../vm_config/node-0/startup.sh")
   service_account {
     # Google recommends custom service accounts that have cloud-platform scope and permissions granted via IAM Roles.
     email  = google_service_account.default.email
@@ -90,7 +90,7 @@ resource "google_compute_instance" "node1" {
     }
   }
 
-  metadata_startup_script = file("../vm_config/node-1/startup.sh")
+  metadata_startup_script = templatefile("../vm_config/node-1/startup.sh")
   service_account {
     # Google recommends custom service accounts that have cloud-platform scope and permissions granted via IAM Roles.
     email  = google_service_account.default.email
@@ -121,7 +121,7 @@ resource "google_compute_instance" "jumpbox" {
     }
   }
 
-  metadata_startup_script = file("../vm_config/jumpbox/startup.sh", {
+  metadata_startup_script = templatefile("../vm_config/jumpbox/startup.sh", {
     server_ip = google_compute_instance.server.network_interface[0].network_ip
     node0_ip  = google_compute_instance.node0.network_interface[0].network_ip
     node1_ip  = google_compute_instance.node1.network_interface[0].network_ip
