@@ -1,3 +1,11 @@
+# Kubernetes Environment Provisioned on GCP
+
+## Introduction
+
+This repository is an implementation of 
+
+
+
 create root password:
 
 ```
