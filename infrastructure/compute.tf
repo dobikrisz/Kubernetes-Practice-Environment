@@ -37,7 +37,7 @@ resource "google_compute_instance" "server" {
     ssh-keys = "root:${tls_private_key.jumpbox_key.public_key_openssh}"
   }
 
-  metadata_startup_script = templatefile("../vm_config/server/startup.sh", {})
+  metadata_startup_script = file("../vm_config/server/startup.sh")
   service_account {
     # Google recommends custom service accounts that have cloud-platform scope and permissions granted via IAM Roles.
     email  = google_service_account.default.email
@@ -72,7 +72,7 @@ resource "google_compute_instance" "node0" {
     ssh-keys = "root:${tls_private_key.jumpbox_key.public_key_openssh}"
   }
 
-  metadata_startup_script = templatefile("../vm_config/node-0/startup.sh", {})
+  metadata_startup_script = file("../vm_config/node-0/startup.sh")
   service_account {
     # Google recommends custom service accounts that have cloud-platform scope and permissions granted via IAM Roles.
     email  = google_service_account.default.email
@@ -107,7 +107,7 @@ resource "google_compute_instance" "node1" {
     ssh-keys = "root:${tls_private_key.jumpbox_key.public_key_openssh}"
   }
 
-  metadata_startup_script = templatefile("../vm_config/node-1/startup.sh", {})
+  metadata_startup_script = file("../vm_config/node-1/startup.sh")
   service_account {
     # Google recommends custom service accounts that have cloud-platform scope and permissions granted via IAM Roles.
     email  = google_service_account.default.email
