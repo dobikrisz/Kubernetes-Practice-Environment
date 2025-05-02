@@ -85,4 +85,5 @@ jobs:
             terraform ${{ github.event.inputs.action }} -auto-approve
           else
             terraform apply -auto-approve
+          fi
 
