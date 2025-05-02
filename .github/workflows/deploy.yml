@@ -5,9 +5,9 @@ on:
   # Triggers the workflow on push or pull request events but only for the "main" branch
   push:
     branches: [ "main" ]
-    paths-ignore:
-      - 'ReadME.md'
-      - 'COPYRIGHT.md'
+    paths:
+      - '!ReadME.md'
+      - '!COPYRIGHT.md'
   pull_request:
     branches: [ "main" ]
 
