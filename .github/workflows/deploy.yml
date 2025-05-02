@@ -6,8 +6,9 @@ on:
   push:
     branches: [ "main" ]
     paths:
-      - '!ReadME.md'
-      - '!COPYRIGHT.md'
+      - "infrastructure/**"
+      - "vm_config/**"
+      - ".github/**"
   pull_request:
     branches: [ "main" ]
 
