@@ -111,9 +111,9 @@ The main interface which trough you will interact via the kubernetes configurati
 gcloud compute ssh --project=PROJECT_ID --zone=ZONE jumpbox
 ```
 
- then configure a root user
+ then configure a root user. Root user is generally not best practice but the kubernetes-the-hard-way documentation recommends it as it would require considerable effort to set up a non-root user to work with our workflow, so we are exchanging security for convinience. In production environments it is advised to modify the setup, however.
 
-Create Root password
+Create Root password:
 
 ```
 sudo passwd root
