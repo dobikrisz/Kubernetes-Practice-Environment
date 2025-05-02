@@ -63,6 +63,27 @@ The needed values are the following:
 * `ZONE` - A valid zone within the region. E.g.: `europe-west3-a`
 * `BUCKET` - the backend bucket configured in the prequisites
 
+### Authentication
+
+To set up the authentication with Workload Identity Provider, just edit the following values in the `deploy.yml`
+
+```
+ - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ secrets.WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: "github-actions-sa@${{ env.GOOGLE_PROJECT_ID }}.iam.gserviceaccount.com"
+          token_format: 'access_token'
+          access_token_lifetime: '3600s'
+```
+
+The variables the following:
+
+* `workload_identity_provider` - The Workload Identity Provider configured. You can find the exact path in the GCP console.
+* `service_account` - The service account you configured to be used via the Workload Indentity Federation. This SA will perform the deployment on GCP.
+* `token_format` - Format of the Token
+* `access_token_lifetime `- Token lifetime
+
 ### Optional configurations
 
 You can configure the terraform configuration to fit your needs better thought it is generally not advised to modify too many things without knowing what are you doing as all resources are needed for functionality. One thing you can edit is the VM type in the [compute.tf](/infrastructure/compute.tf) config:
@@ -158,6 +179,16 @@ node-1   Ready    <none>   10m   v1.32.3
 ## Test Configuration
 
 In this lab you will complete a series of tasks to ensure your Kubernetes cluster is functioning correctly.
+
+Don't forget to use the root user:
+
+```
+su - root
+```
+
+```
+cd /kubernetes-the-hard-way/
+```
 
 ### Data Encryption
 
@@ -351,3 +382,7 @@ Accept-Ranges: bytes
 ```
 
 If Every test ran correctly, the setup is functioning and you can start experimenting with Kubernetes!
+
+## Cleanup
+
+If you want to delete the deployment, you can run the pipeline on Github manually, and select the "destroy" action.

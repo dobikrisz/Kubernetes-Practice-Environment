@@ -10,6 +10,15 @@ on:
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
+    inputs:
+      action:
+        description: 'Terraform action to run'
+        required: true
+        default: 'apply'
+        type: choice
+        options:
+          - apply
+          - destroy
 
 jobs:
   deploy:
@@ -32,7 +41,7 @@ jobs:
       - name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v2
         with:
-          workload_identity_provider: "projects/411881544328/locations/global/workloadIdentityPools/github/providers/k8s-repo"
+          workload_identity_provider: ${{ secrets.WORKLOAD_IDENTITY_PROVIDER }}
           service_account: "github-actions-sa@${{ env.GOOGLE_PROJECT_ID }}.iam.gserviceaccount.com"
           token_format: 'access_token'
           access_token_lifetime: '3600s'
@@ -71,14 +80,9 @@ jobs:
           TF_VAR_PROJECT_ID: ${{ env.GOOGLE_PROJECT_ID }}
           TF_VAR_REGION: ${{ env.REGION }}
           TF_VAR_ZONE: ${{ env.ZONE }}
-        run: terraform apply --auto-approve 
-
-      #- name: Terraform Destroy
-      #  working-directory: infrastructure
-      #  env:
-      #    TF_VAR_PROJECT_ID: ${{ env.GOOGLE_PROJECT_ID }}
-      #    TF_VAR_REGION: ${{ env.REGION }}
-      #    TF_VAR_ZONE: ${{ env.ZONE }}
-      #  run: terraform destroy --auto-approve 
-            
+        run: |
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            terraform ${{ github.event.inputs.action }} -auto-approve
+          else
+            terraform apply -auto-approve
 
