@@ -74,7 +74,7 @@ jobs:
       #     TF_VAR_ZONE: ${{ env.ZONE }}
       #   run: terraform plan -lock-timeout=60s
 
-      - name: Terraform Apply
+      - name: Terraform Action
         working-directory: infrastructure
         env:
           TF_VAR_PROJECT_ID: ${{ env.GOOGLE_PROJECT_ID }}
